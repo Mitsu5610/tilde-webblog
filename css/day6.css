@@ -1,0 +1,11 @@
+/* Day 6 — Baguio City (Pine Forest Blue) */
+:root {
+    --hero-from:   #0B1E40;
+    --hero-mid:    #1565C0;
+    --hero-to:     #E3F2FD;
+    --accent:      #1976D2;
+    --accent-dk:   #0D47A1;
+    --accent-glow: rgba(25,118,210,0.32);
+    --gold:        #FFD54F;
+    --gold-dk:     #F9A825;
+}

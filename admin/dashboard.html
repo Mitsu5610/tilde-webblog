@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJM Tour CMS &mdash; Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset ── */
+        *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+        html,body { height:100%; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #EEF2FF;
+            color: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── Top header ── */
+        .cms-header {
+            height: 60px;
+            background: #0D1B4B;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 12px rgba(0,0,0,.25);
+            z-index: 50;
+        }
+        .cms-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+        .cms-logo-icon { font-size: 1.4rem; }
+        .cms-logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: white;
+            line-height: 1;
+        }
+        .cms-logo-sub {
+            font-size: .68rem;
+            color: rgba(255,255,255,.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-user {
+            font-size: .82rem;
+            color: rgba(255,255,255,.6);
+        }
+        .header-user strong { color: #FFD54F; }
+        .btn-logout {
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.2);
+            color: white;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+            letter-spacing: .5px;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,.18); }
+        .btn-view-site {
+            background: #1565C0;
+            border: none;
+            color: white;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .btn-view-site:hover { background: #1976D2; }
+
+        /* ── Body layout ── */
+        .cms-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .cms-sidebar {
+            width: 220px;
+            background: #1A1A2E;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px 12px;
+        }
+        .sidebar-heading {
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.3);
+            padding: 0 8px;
+            margin-bottom: 10px;
+        }
+        .day-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px 12px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,.6);
+            font-family: 'Poppins', sans-serif;
+            font-size: .84rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all .2s;
+            margin-bottom: 3px;
+        }
+        .day-btn:hover { background: rgba(255,255,255,.06); color: white; }
+        .day-btn.active { background: #1565C0; color: white; }
+        .day-btn .day-num {
+            width: 26px; height: 26px;
+            background: rgba(255,255,255,.1);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+        .day-btn.active .day-num { background: rgba(255,255,255,.2); }
+        .day-btn .day-label { line-height: 1.2; }
+        .day-btn .day-sub {
+            font-size: .68rem;
+            color: rgba(255,255,255,.4);
+            display: block;
+        }
+        .day-btn.active .day-sub { color: rgba(255,255,255,.65); }
+
+        /* ── Main editor ── */
+        .cms-main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+        }
+
+        .editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .editor-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: #1565C0;
+            letter-spacing: 3px;
+        }
+        .editor-header p { color: #888; font-size: .84rem; }
+
+        .btn-save {
+            background: linear-gradient(135deg, #1976D2, #1565C0);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s;
+            box-shadow: 0 4px 14px rgba(21,101,192,.3);
+            letter-spacing: .5px;
+        }
+        .btn-save:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(21,101,192,.45);
+        }
+        .btn-save:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+        /* ── Section cards ── */
+        .editor-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.07);
+            padding: 26px 28px;
+            margin-bottom: 22px;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title .s-badge {
+            background: #EEF2FF;
+            color: #1565C0;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        /* ── Form fields ── */
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .field-row.single { grid-template-columns: 1fr; }
+        .field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+        .field-group { display: flex; flex-direction: column; gap: 5px; }
+        .field-group label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .field-group input[type="text"],
+        .field-group textarea,
+        .field-group input[type="url"] {
+            padding: 10px 14px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .88rem;
+            color: #333;
+            outline: none;
+            transition: border-color .2s;
+            resize: vertical;
+        }
+        .field-group input:focus,
+        .field-group textarea:focus { border-color: #1565C0; }
+        .field-group textarea { min-height: 100px; }
+
+        /* Color row */
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .color-row label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .color-picker-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        input[type="color"] {
+            width: 44px; height: 34px;
+            border: none; padding: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: none;
+        }
+        .color-hex {
+            padding: 7px 12px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .82rem;
+            color: #555;
+            width: 100px;
+            outline: none;
+        }
+        .color-hex:focus { border-color: #1565C0; }
+
+        /* Banner gradient preview */
+        .gradient-preview {
+            height: 36px;
+            border-radius: 8px;
+            flex: 1;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+        }
+
+        /* ── Stop card ── */
+        .stop-editor {
+            border: 1.5px solid #EEF2FF;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .stop-editor-header {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .2s;
+        }
+        .stop-editor-header:hover { background: #F8FAFF; }
+        .stop-num-badge {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .stop-editor-title {
+            font-weight: 600;
+            font-size: .9rem;
+            color: #333;
+            flex: 1;
+        }
+        .stop-editor-toggle {
+            color: #999;
+            font-size: .8rem;
+            transition: transform .3s;
+        }
+        .stop-editor-body {
+            padding: 20px 18px 22px;
+            border-top: 1.5px solid #EEF2FF;
+            display: none;
+        }
+        .stop-editor.open .stop-editor-body { display: block; }
+        .stop-editor.open .stop-editor-toggle { transform: rotate(180deg); }
+
+        /* ── Photo section ── */
+        .photo-section-label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 18px;
+            margin-bottom: 10px;
+        }
+        .photo-grid-admin {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .photo-thumb {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #F0F4FF;
+        }
+        .photo-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+        }
+        .photo-thumb .rm-photo {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 22px; height: 22px;
+            background: rgba(0,0,0,.65);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+        .photo-thumb:hover .rm-photo { opacity: 1; }
+
+        .upload-drop {
+            border: 2.5px dashed #CBD5E1;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            background: #FAFCFF;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .upload-drop:hover, .upload-drop.over {
+            border-color: #1565C0;
+            background: #EEF4FF;
+        }
+        .upload-drop label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #1565C0;
+        }
+        .upload-drop strong { font-size: .85rem; }
+        .upload-drop small  { font-size: .72rem; color: #999; }
+
+        .uploading-badge {
+            display: inline-block;
+            background: #EEF2FF;
+            color: #1565C0;
+            font-size: .72rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: .88rem;
+            font-weight: 600;
+            color: white;
+            z-index: 9999;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: transform .35s cubic-bezier(.23,1,.32,1), opacity .35s ease;
+            pointer-events: none;
+            max-width: 320px;
+            box-shadow: 0 8px 28px rgba(0,0,0,.2);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: #2E7D32; }
+        .toast.error   { background: #C62828; }
+        .toast.info    { background: #1565C0; }
+
+        /* ── Loading overlay ── */
+        .loading-overlay {
+            position: fixed; inset: 0;
+            background: rgba(4,9,30,.7);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9000;
+        }
+        .loading-overlay.hidden { display: none; }
+        .loading-spinner {
+            width: 44px; height: 44px;
+            border: 4px solid rgba(255,255,255,.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .cms-sidebar { display: none; }
+            .cms-main { padding: 16px; }
+            .field-row { grid-template-columns: 1fr; }
+            .field-row.triple { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="cms-header">
+        <div class="cms-logo">
+            <span class="cms-logo-icon">&#9992;</span>
+            <div>
+                <div class="cms-logo-text">DJM TOUR CMS</div>
+                <div class="cms-logo-sub">Content Manager</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="header-user">Logged in as <strong id="logged-user">admin</strong></span>
+            <a href="/" class="btn-view-site" target="_blank">&#128065; View Site</a>
+            <button class="btn-logout" id="logout-btn">&#128682; Logout</button>
+        </div>
+    </header>
+
+    <!-- Body -->
+    <div class="cms-body">
+
+        <!-- Sidebar -->
+        <aside class="cms-sidebar">
+            <div class="sidebar-heading">Tour Days</div>
+
+            <button class="day-btn active" data-day="1">
+                <span class="day-num">1</span>
+                <span class="day-label">
+                    Day 1
+                    <span class="day-sub">Historical Manila</span>
+                </span>
+            </button>
+            <button class="day-btn" data-day="2">
+                <span class="day-num">2</span>
+                <span class="day-label">
+                    Day 2
+                    <span class="day-sub">Tech &amp; Corporate</span>
+                </span>
+            </button>
+            <button class="day-btn" data-day="3">
+                <span class="day-num">3</span>
+                <span class="day-label">
+                    Day 3
+                    <span class="day-sub">Animation &amp; Telecom</span>
+                </span>
+            </button>
+            <button class="day-btn" data-day="4">
+                <span class="day-num">4</span>
+                <span class="day-label">
+                    Day 4
+                    <span class="day-sub">Government &amp; BPO</span>
+                </span>
+            </button>
+            <button class="day-btn" data-day="5">
+                <span class="day-num">5</span>
+                <span class="day-label">
+                    Free Day
+                    <span class="day-sub">Tagaytay</span>
+                </span>
+            </button>
+            <button class="day-btn" data-day="6">
+                <span class="day-num">6</span>
+                <span class="day-label">
+                    Day 6
+                    <span class="day-sub">Baguio City</span>
+                </span>
+            </button>
+        </aside>
+
+        <!-- Main editor -->
+        <main class="cms-main" id="cms-main">
+            <!-- Built by JS -->
+        </main>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+    /* ============================================================
+       CMS DASHBOARD JAVASCRIPT
+    ============================================================ */
+
+    /* ── Day configuration ─────────────────────────────────── */
+    const DAY_CONFIG = {
+        1: {
+            title: 'Historical Manila',
+            heroTitle: 'HISTORICAL MANILA',
+            heroSubtitle: "Where the Philippines' proud history comes alive 🏛",
+            introText: 'Day 1 of our DJM Educational Tour plunged us right into the heart of Filipino history...',
+            accentColor: '#C62828',
+            heroGradient: 'linear-gradient(180deg,#3E0000 0%,#B71C1C 45%,#FFEBEE 100%)',
+            stops: [
+                { id: 'rizal-park',  label: 'Rizal Park / Luneta Park', color: '#1565C0',
+                  bannerGradient: 'linear-gradient(135deg,#1565C0,#1976D2,#1E88E5)',
+                  description: "Rizal Park, popularly known as Luneta, is the most important national park in the Philippines..." },
+                { id: 'intramuros', label: 'Intramuros', color: '#D84315',
+                  bannerGradient: 'linear-gradient(135deg,#BF360C,#D84315,#E64A19)',
+                  description: "Intramuros, meaning 'within the walls' in Latin, is the historic walled city at the heart of Manila..." }
+            ]
+        },
+        2: {
+            title: 'Tech & Corporate',
+            heroTitle: 'TECH & CORPORATE',
+            heroSubtitle: 'Inside the world of engineering & enterprise technology 💻',
+            introText: 'Day 2 gave us a front-row seat to two very different corners of the Philippine tech and business landscape...',
+            accentColor: '#1565C0',
+            heroGradient: 'linear-gradient(180deg,#0A0E2E 0%,#1565C0 45%,#E3F2FD 100%)',
+            stops: [
+                { id: 'hytec',    label: 'Hytec Power Inc.', color: '#0D47A1',
+                  bannerGradient: 'linear-gradient(135deg,#0D47A1,#1565C0,#1976D2)',
+                  description: 'Hytec Power Inc. is a Philippine engineering company specializing in power solutions...' },
+                { id: 'opentext', label: 'OpenText Philippines', color: '#006064',
+                  bannerGradient: 'linear-gradient(135deg,#006064,#00838F,#0097A7)',
+                  description: 'OpenText is a global leader in Enterprise Information Management (EIM) software...' }
+            ]
+        },
+        3: {
+            title: 'Animation & Telecom',
+            heroTitle: 'ANIMATION & TELECOM',
+            heroSubtitle: 'From creative artistry to global communication ✨',
+            introText: 'Day 3 was a study in contrasts — from the vibrant world of Filipino animation to the fast-paced BPO sector...',
+            accentColor: '#7B1FA2',
+            heroGradient: 'linear-gradient(180deg,#1A0038 0%,#6A1B9A 45%,#F3E5F5 100%)',
+            stops: [
+                { id: 'toppeg',          label: 'TOPPEG Animation Studio', color: '#AD1457',
+                  bannerGradient: 'linear-gradient(135deg,#880E4F,#AD1457,#C2185B)',
+                  description: 'TOPPEG is a Filipino animation company producing animated content for local and international clients...' },
+                { id: 'teleperformance', label: 'Teleperformance Philippines', color: '#283593',
+                  bannerGradient: 'linear-gradient(135deg,#1A237E,#283593,#3949AB)',
+                  description: 'Teleperformance is a global leader in customer experience management with a massive presence in the Philippines...' }
+            ]
+        },
+        4: {
+            title: 'Government & BPO',
+            heroTitle: 'GOVERNMENT & BPO',
+            heroSubtitle: 'Public service and global outsourcing in action 🏛',
+            introText: 'Day 4 took us from the halls of one of Metro Manila\'s most vital government agencies to a modern BPO company...',
+            accentColor: '#00796B',
+            heroGradient: 'linear-gradient(180deg,#001A17 0%,#00695C 45%,#E0F2F1 100%)',
+            stops: [
+                { id: 'mmda',          label: 'MMDA', color: '#1565C0',
+                  bannerGradient: 'linear-gradient(135deg,#0D47A1,#1565C0,#1976D2)',
+                  description: 'The MMDA is responsible for metro-wide services across all 16 cities of Metro Manila...' },
+                { id: 'microsourcing', label: 'MicroSourcing', color: '#00695C',
+                  bannerGradient: 'linear-gradient(135deg,#004D40,#00695C,#00796B)',
+                  description: 'MicroSourcing is one of the largest BPO companies in the Philippines, serving clients globally...' }
+            ]
+        },
+        5: {
+            title: 'Free Day — Tagaytay',
+            heroTitle: 'TAGAYTAY',
+            heroSubtitle: 'Cool air, Taal views & island vibes 🌋',
+            introText: 'Our well-deserved free day took us to Tagaytay — the Philippines\' most beloved highland destination...',
+            accentColor: '#388E3C',
+            heroGradient: 'linear-gradient(180deg,#003311 0%,#2E7D32 45%,#E8F5E9 100%)',
+            stops: [
+                { id: 'hilltop',   label: 'Hilltop Shrine', color: '#4527A0',
+                  bannerGradient: 'linear-gradient(135deg,#311B92,#4527A0,#512DA8)',
+                  description: 'The hilltop shrine at the very summit of Tagaytay — where a majestic Jesus statue stands overlooking the ridge...' },
+                { id: 'sky-ranch', label: 'Sky Ranch Tagaytay', color: '#0277BD',
+                  bannerGradient: 'linear-gradient(135deg,#01579B,#0277BD,#0288D1)',
+                  description: 'Sky Ranch is Tagaytay\'s premier outdoor amusement park with an unobstructed view of Taal Volcano and Taal Lake...' }
+            ]
+        },
+        6: {
+            title: 'Baguio City',
+            heroTitle: 'BAGUIO CITY',
+            heroSubtitle: 'The City of Pines 🌲 — Cool air, history & mountain views',
+            introText: 'The sixth and final day brought us to Baguio City — the summer capital nestled in the Cordillera Mountains...',
+            accentColor: '#1976D2',
+            heroGradient: 'linear-gradient(180deg,#0B1E40 0%,#1565C0 45%,#E3F2FD 100%)',
+            stops: [
+                { id: 'bell-church', label: 'Bell Church', color: '#D84315',
+                  bannerGradient: 'linear-gradient(135deg,#BF360C,#D84315,#E64A19)',
+                  description: 'The Bell Church — Our Lady of Atonement Cathedral — is one of Baguio\'s most photographed landmarks with its pagoda-style architecture...' },
+                { id: 'mansion',    label: 'The Mansion', color: '#4527A0',
+                  bannerGradient: 'linear-gradient(135deg,#311B92,#4527A0,#512DA8)',
+                  description: 'The Mansion is the official summer residence of the President of the Philippines, featuring Victorian-style architecture...' },
+                { id: 'pma',        label: 'Philippine Military Academy', color: '#2E7D32',
+                  bannerGradient: 'linear-gradient(135deg,#1B5E20,#2E7D32,#388E3C)',
+                  description: 'The Philippine Military Academy (PMA), known as the West Point of Asia, is the nation\'s premier military school...' },
+                { id: 'mines-view', label: 'Mines View Park', color: '#00695C',
+                  bannerGradient: 'linear-gradient(135deg,#004D40,#00695C,#00796B)',
+                  description: 'Mines View Park offers breathtaking panoramic views of the Cordillera mountain ranges and the old Benguet mining town...' }
+            ]
+        }
+    };
+
+    /* ── State ─────────────────────────────────────────────── */
+    let currentDay  = 1;
+    let dayData     = {};   // { [day]: contentObject }
+    let uploadQueue = {};   // track pending uploads per stop
+
+    /* ── Init ──────────────────────────────────────────────── */
+    async function init() {
+        try {
+            const res = await fetch('/api/me');
+            if (!res.ok) { window.location.href = '/admin/'; return; }
+            const me = await res.json();
+            document.getElementById('logged-user').textContent = me.username;
+        } catch {
+            window.location.href = '/admin/';
+            return;
+        }
+        hideLoading();
+        loadDay(1);
+
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                loadDay(parseInt(btn.dataset.day));
+            });
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/admin/';
+        });
+    }
+
+    /* ── Load day content ──────────────────────────────────── */
+    async function loadDay(day) {
+        currentDay = day;
+        showLoading();
+        const cfg = DAY_CONFIG[day];
+
+        let saved = null;
+        try {
+            const res = await fetch('/api/content?day=' + day);
+            if (res.ok) saved = await res.json();
+        } catch { /* ignore */ }
+
+        // Merge saved with defaults
+        const content = mergeDefaults(day, saved);
+        dayData[day] = content;
+
+        hideLoading();
+        renderEditor(day, cfg, content);
+    }
+
+    function mergeDefaults(day, saved) {
+        const cfg = DAY_CONFIG[day];
+        const base = {
+            heroTitle:    cfg.heroTitle,
+            heroSubtitle: cfg.heroSubtitle,
+            introText:    cfg.introText,
+            accentColor:  cfg.accentColor,
+            heroGradient: cfg.heroGradient,
+            stops: cfg.stops.map(s => ({
+                id:             s.id,
+                title:          s.label,
+                description:    s.description,
+                bannerGradient: s.bannerGradient,
+                images:         []
+            }))
+        };
+        if (!saved) return base;
+        // Deep merge
+        return {
+            ...base,
+            ...saved,
+            stops: base.stops.map(bs => {
+                const ss = (saved.stops || []).find(x => x.id === bs.id) || {};
+                return { ...bs, ...ss };
+            })
+        };
+    }
+
+    /* ── Render editor ─────────────────────────────────────── */
+    function renderEditor(day, cfg, content) {
+        const main = document.getElementById('cms-main');
+        main.innerHTML = '';
+
+        /* Header */
+        const header = el('div', 'editor-header');
+        const titleBlock = el('div');
+        titleBlock.innerHTML = `<h2>Day ${day === 5 ? 'Free' : day} — ${cfg.title}</h2>
+            <p>Edit content, images, and colors for this day. Click Save when done.</p>`;
+        const saveBtn = el('button', 'btn-save', '&#128190; Save Changes');
+        saveBtn.id = 'save-btn';
+        saveBtn.onclick = saveDay;
+        header.appendChild(titleBlock);
+        header.appendChild(saveBtn);
+        main.appendChild(header);
+
+        /* ── Page Settings ── */
+        const pageSection = el('div', 'editor-section');
+        pageSection.innerHTML = `<div class="section-title">&#127760; Page Settings <span class="s-badge">Hero</span></div>`;
+
+        // Hero title + subtitle
+        const row1 = el('div', 'field-row');
+        row1.appendChild(makeField('Hero Title', 'hero-title', content.heroTitle));
+        row1.appendChild(makeField('Hero Subtitle', 'hero-subtitle', content.heroSubtitle));
+        pageSection.appendChild(row1);
+
+        // Intro text
+        const row2 = el('div', 'field-row single');
+        row2.appendChild(makeTextarea('Intro / About Text', 'intro-text', content.introText));
+        pageSection.appendChild(row2);
+
+        // Accent color + hero gradient
+        const colorRow = el('div', 'color-row');
+        colorRow.appendChild(makeColorPicker('Theme Accent Color', 'accent-color', content.accentColor));
+        pageSection.appendChild(colorRow);
+
+        const gradRow = el('div', 'field-row single');
+        gradRow.appendChild(makeField('Hero Background Gradient (CSS)', 'hero-gradient', content.heroGradient));
+        pageSection.appendChild(gradRow);
+
+        main.appendChild(pageSection);
+
+        /* ── Stop Editors ── */
+        const stopsSection = el('div', 'editor-section');
+        stopsSection.innerHTML = `<div class="section-title">&#128205; Tour Stops <span class="s-badge">${content.stops.length} stops</span></div>`;
+
+        content.stops.forEach((stop, idx) => {
+            const stopCfg = cfg.stops.find(s => s.id === stop.id) || cfg.stops[idx] || {};
+            stopsSection.appendChild(makeStopEditor(stop, stopCfg.color || '#1565C0', idx));
+        });
+
+        main.appendChild(stopsSection);
+    }
+
+    function makeStopEditor(stop, color, idx) {
+        const wrapper = el('div', 'stop-editor');
+        wrapper.dataset.stopId = stop.id;
+
+        // Header (clickable toggle)
+        const head = el('div', 'stop-editor-header');
+        head.innerHTML = `
+            <div class="stop-num-badge" style="background:${color}">${idx + 1}</div>
+            <div class="stop-editor-title">${stop.title || stop.id}</div>
+            <span class="stop-editor-toggle">&#9660;</span>`;
+        head.onclick = () => wrapper.classList.toggle('open');
+        wrapper.appendChild(head);
+
+        // Body
+        const body = el('div', 'stop-editor-body');
+
+        // Title + Banner gradient
+        const r1 = el('div', 'field-row');
+        r1.appendChild(makeField('Stop Title', `stop-${stop.id}-title`, stop.title));
+        body.appendChild(r1);
+
+        const r2 = el('div', 'field-row single');
+        r2.appendChild(makeTextarea('Description', `stop-${stop.id}-desc`, stop.description));
+        body.appendChild(r2);
+
+        // Banner gradient
+        const gradDiv = el('div');
+        gradDiv.innerHTML = `<div class="photo-section-label">Banner Gradient (CSS)</div>`;
+        const gr = el('div', 'field-row single');
+        const gf = makeField('', `stop-${stop.id}-gradient`, stop.bannerGradient);
+        gr.appendChild(gf);
+        gradDiv.appendChild(gr);
+        // Live preview
+        const preview = el('div', 'gradient-preview');
+        preview.id = `preview-${stop.id}`;
+        preview.style.background = stop.bannerGradient;
+        gradDiv.appendChild(preview);
+        const gradInput = gf.querySelector('input');
+        gradInput.addEventListener('input', () => {
+            preview.style.background = gradInput.value;
+        });
+        body.appendChild(gradDiv);
+
+        // Photos
+        const photoLabel = el('div', 'photo-section-label', '&#128247; Stop Photos');
+        body.appendChild(photoLabel);
+
+        const grid = el('div', 'photo-grid-admin');
+        grid.id = `admin-gallery-${stop.id}`;
+        (stop.images || []).forEach(url => {
+            grid.appendChild(makeThumb(url, stop.id));
+        });
+        body.appendChild(grid);
+
+        // Upload zone
+        const dropZone = el('div', 'upload-drop');
+        dropZone.id = `drop-${stop.id}`;
+        dropZone.innerHTML = `
+            <label for="file-admin-${stop.id}">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <strong>Click to upload photos</strong>
+                <small>or drag &amp; drop &mdash; JPG, PNG, WEBP</small>
+            </label>
+            <input type="file" id="file-admin-${stop.id}" accept="image/*" multiple hidden>`;
+
+        const fileInput = dropZone.querySelector('input');
+        fileInput.addEventListener('change', () => handleFileUpload(fileInput, stop.id));
+        dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault(); dropZone.classList.remove('over');
+            uploadFiles(Array.from(e.dataTransfer.files), stop.id);
+        });
+        body.appendChild(dropZone);
+
+        wrapper.appendChild(body);
+        return wrapper;
+    }
+
+    /* ── File Upload ───────────────────────────────────────── */
+    function handleFileUpload(input, stopId) {
+        uploadFiles(Array.from(input.files), stopId);
+        input.value = '';
+    }
+
+    async function uploadFiles(files, stopId) {
+        for (const file of files) {
+            if (!file.type.startsWith('image/')) continue;
+            await uploadOneFile(file, stopId);
+        }
+    }
+
+    async function uploadOneFile(file, stopId) {
+        const grid = document.getElementById(`admin-gallery-${stopId}`);
+        if (!grid) return;
+
+        // Show placeholder while uploading
+        const placeholder = el('div', 'photo-thumb');
+        placeholder.style.cssText = 'display:flex;align-items:center;justify-content:center;font-size:1.5rem;';
+        placeholder.innerHTML = '<span class="uploading-badge">Uploading...</span>';
+        grid.appendChild(placeholder);
+
+        try {
+            const base64 = await readAsDataURL(file);
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, data: base64, type: file.type })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                // If Blob not set up, fall back to base64 preview (local only)
+                if (err.error && err.error.includes('Blob store')) {
+                    showToast('Blob storage not set up yet — showing local preview only', 'info');
+                    placeholder.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = base64;
+                    placeholder.appendChild(img);
+                    const rmBtn = makeRemoveBtn(base64, stopId, placeholder);
+                    placeholder.appendChild(rmBtn);
+                    addImageToState(stopId, base64);
+                } else {
+                    showToast('Upload failed: ' + (err.error || 'Unknown error'), 'error');
+                    placeholder.remove();
+                }
+                return;
+            }
+
+            const { url } = await res.json();
+            placeholder.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = url;
+            placeholder.appendChild(img);
+            const rmBtn = makeRemoveBtn(url, stopId, placeholder);
+            placeholder.appendChild(rmBtn);
+            addImageToState(stopId, url);
+            showToast('Photo uploaded!', 'success');
+        } catch (e) {
+            showToast('Upload error: ' + e.message, 'error');
+            placeholder.remove();
+        }
+    }
+
+    function makeThumb(url, stopId) {
+        const thumb = el('div', 'photo-thumb');
+        const img = document.createElement('img');
+        img.src = url;
+        img.loading = 'lazy';
+        thumb.appendChild(img);
+        thumb.appendChild(makeRemoveBtn(url, stopId, thumb));
+        return thumb;
+    }
+
+    function makeRemoveBtn(url, stopId, thumbEl) {
+        const btn = el('button', 'rm-photo', '&#10005;');
+        btn.title = 'Remove photo';
+        btn.onclick = e => {
+            e.stopPropagation();
+            thumbEl.style.transition = 'opacity .2s';
+            thumbEl.style.opacity = '0';
+            setTimeout(() => {
+                thumbEl.remove();
+                removeImageFromState(stopId, url);
+            }, 200);
+        };
+        return btn;
+    }
+
+    function addImageToState(stopId, url) {
+        const stop = getCurrentStop(stopId);
+        if (stop && !stop.images.includes(url)) stop.images.push(url);
+    }
+
+    function removeImageFromState(stopId, url) {
+        const stop = getCurrentStop(stopId);
+        if (stop) stop.images = stop.images.filter(u => u !== url);
+    }
+
+    function getCurrentStop(stopId) {
+        const content = dayData[currentDay];
+        return content && content.stops.find(s => s.id === stopId);
+    }
+
+    /* ── Save ──────────────────────────────────────────────── */
+    async function saveDay() {
+        const btn = document.getElementById('save-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        // Collect form values
+        const content = {
+            heroTitle:    val('hero-title'),
+            heroSubtitle: val('hero-subtitle'),
+            introText:    val('intro-text'),
+            accentColor:  val('accent-color'),
+            heroGradient: val('hero-gradient'),
+            stops: []
+        };
+
+        (DAY_CONFIG[currentDay].stops).forEach((stopCfg, idx) => {
+            const sid = stopCfg.id;
+            const savedImages = (dayData[currentDay]?.stops.find(s => s.id === sid)?.images) || [];
+            content.stops.push({
+                id:             sid,
+                title:          val(`stop-${sid}-title`),
+                description:    val(`stop-${sid}-desc`),
+                bannerGradient: val(`stop-${sid}-gradient`),
+                images:         savedImages
+            });
+        });
+
+        try {
+            const res = await fetch('/api/content?day=' + currentDay, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(content)
+            });
+
+            if (res.ok) {
+                dayData[currentDay] = content;
+                showToast('Changes saved successfully!', 'success');
+            } else {
+                const err = await res.json();
+                if (err.error && err.error.includes('KV store')) {
+                    showToast('KV storage not set up yet — add a Vercel KV database in your project settings.', 'error');
+                } else if (res.status === 401) {
+                    showToast('Session expired. Please log in again.', 'error');
+                    setTimeout(() => window.location.href = '/admin/', 2000);
+                } else {
+                    showToast('Save failed: ' + (err.error || 'Unknown'), 'error');
+                }
+            }
+        } catch (e) {
+            showToast('Network error: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '&#128190; Save Changes';
+        }
+    }
+
+    /* ── Helpers ───────────────────────────────────────────── */
+    function el(tag, cls, text) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text !== undefined) e.innerHTML = text;
+        return e;
+    }
+
+    function makeField(labelText, id, value) {
+        const wrap = el('div', 'field-group');
+        if (labelText) {
+            const lbl = document.createElement('label');
+            lbl.textContent = labelText;
+            lbl.setAttribute('for', id);
+            wrap.appendChild(lbl);
+        }
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = id;
+        input.value = value || '';
+        wrap.appendChild(input);
+        return wrap;
+    }
+
+    function makeTextarea(labelText, id, value) {
+        const wrap = el('div', 'field-group');
+        const lbl = document.createElement('label');
+        lbl.textContent = labelText;
+        lbl.setAttribute('for', id);
+        wrap.appendChild(lbl);
+        const ta = document.createElement('textarea');
+        ta.id = id;
+        ta.value = value || '';
+        wrap.appendChild(ta);
+        return wrap;
+    }
+
+    function makeColorPicker(labelText, id, value) {
+        const wrap = el('div');
+        wrap.style.display = 'flex'; wrap.style.alignItems = 'center'; wrap.style.gap = '10px';
+        const lbl = document.createElement('label');
+        lbl.textContent = labelText;
+        lbl.style.cssText = 'font-size:.75rem;font-weight:600;color:#666;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;';
+        const pickerWrap = el('div', 'color-picker-wrap');
+        const picker = document.createElement('input');
+        picker.type = 'color';
+        picker.id = id;
+        picker.value = value || '#1565C0';
+        const hexInput = el('input', 'color-hex');
+        hexInput.type = 'text';
+        hexInput.value = value || '#1565C0';
+        hexInput.maxLength = 7;
+        // Sync
+        picker.addEventListener('input', () => { hexInput.value = picker.value; });
+        hexInput.addEventListener('input', () => {
+            if (/^#[0-9A-Fa-f]{6}$/.test(hexInput.value)) picker.value = hexInput.value;
+        });
+        pickerWrap.appendChild(picker);
+        pickerWrap.appendChild(hexInput);
+        wrap.appendChild(lbl);
+        wrap.appendChild(pickerWrap);
+        return wrap;
+    }
+
+    function val(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    function readAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload  = e => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function showToast(msg, type = 'info') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast ' + type;
+        t.classList.add('show');
+        clearTimeout(t._tid);
+        t._tid = setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
+    function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
+
+    /* ── Kick off ──────────────────────────────────────────── */
+    init();
+    </script>
+</body>
+</html>

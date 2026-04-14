@@ -1,0 +1,11 @@
+/* Day 1 — Historical Manila (Crimson / Heritage Red) */
+:root {
+    --hero-from:   #3E0000;
+    --hero-mid:    #B71C1C;
+    --hero-to:     #FFEBEE;
+    --accent:      #C62828;
+    --accent-dk:   #7F0000;
+    --accent-glow: rgba(198,40,40,0.32);
+    --gold:        #FFD54F;
+    --gold-dk:     #F9A825;
+}

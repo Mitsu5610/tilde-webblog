@@ -1,0 +1,11 @@
+/* Day 5 — Tagaytay Free Day (Sky + Nature Green) */
+:root {
+    --hero-from:   #003311;
+    --hero-mid:    #2E7D32;
+    --hero-to:     #E8F5E9;
+    --accent:      #388E3C;
+    --accent-dk:   #1B5E20;
+    --accent-glow: rgba(56,142,60,0.32);
+    --gold:        #FFD54F;
+    --gold-dk:     #F9A825;
+}

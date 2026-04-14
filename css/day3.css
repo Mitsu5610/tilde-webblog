@@ -1,0 +1,11 @@
+/* Day 3 — Animation & Telecom (Creative Purple) */
+:root {
+    --hero-from:   #1A0038;
+    --hero-mid:    #6A1B9A;
+    --hero-to:     #F3E5F5;
+    --accent:      #7B1FA2;
+    --accent-dk:   #4A148C;
+    --accent-glow: rgba(123,31,162,0.32);
+    --gold:        #FFD54F;
+    --gold-dk:     #F9A825;
+}

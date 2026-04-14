@@ -1,0 +1,11 @@
+/* Day 2 — Tech & Corporate (Deep Blue) */
+:root {
+    --hero-from:   #0A0E2E;
+    --hero-mid:    #1565C0;
+    --hero-to:     #E3F2FD;
+    --accent:      #1565C0;
+    --accent-dk:   #0D47A1;
+    --accent-glow: rgba(21,101,192,0.32);
+    --gold:        #FFD54F;
+    --gold-dk:     #F9A825;
+}

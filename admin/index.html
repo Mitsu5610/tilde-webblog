@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJM Tour &mdash; Admin Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #04091E 0%, #0B1D4E 40%, #1565C0 80%, #1976D2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* ── Animated clouds ── */
+        .cloud {
+            position: fixed;
+            background: rgba(255,255,255,.06);
+            border-radius: 50px;
+            pointer-events: none;
+        }
+        .cloud::before,.cloud::after {
+            content:''; position:absolute;
+            background:rgba(255,255,255,.06);
+            border-radius:50%;
+        }
+        .cl1 { width:240px;height:55px;top:8%;left:-260px;
+               animation:drift 22s linear infinite; }
+        .cl1::before{width:100px;height:90px;top:-50px;left:28px}
+        .cl1::after {width:80px; height:70px;top:-40px;left:120px}
+        .cl2 { width:180px;height:40px;top:62%;left:-200px;
+               animation:drift 30s linear 5s infinite;opacity:.7 }
+        .cl2::before{width:76px;height:66px;top:-38px;left:18px}
+        .cl2::after {width:60px;height:52px;top:-28px;left:90px}
+        .cl3 { width:210px;height:48px;top:30%;left:-230px;
+               animation:drift 26s linear 12s infinite;opacity:.5 }
+        .cl3::before{width:92px;height:80px;top:-46px;left:24px}
+        .cl3::after {width:70px;height:60px;top:-34px;left:104px}
+
+        @keyframes drift {
+            0%   { transform:translateX(0); }
+            100% { transform:translateX(calc(100vw + 300px)); }
+        }
+
+        /* ── Login card ── */
+        .login-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255,255,255,.07);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 24px;
+            padding: 44px 40px 40px;
+            box-shadow: 0 24px 80px rgba(0,0,0,.4);
+            animation: card-in .8s cubic-bezier(.23,1,.32,1) both;
+        }
+
+        @keyframes card-in {
+            from { opacity:0; transform:translateY(30px) scale(.97); }
+            to   { opacity:1; transform:none; }
+        }
+
+        .login-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .plane-icon { font-size: 1.6rem; }
+        .login-badge-text h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: white;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+        .login-badge-text p {
+            font-size: .72rem;
+            color: rgba(255,255,255,.6);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .admin-label {
+            display: inline-block;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.25);
+            color: #FFD54F;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 50px;
+            margin-bottom: 28px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+        .field label {
+            display: block;
+            font-size: .75rem;
+            font-weight: 600;
+            color: rgba(255,255,255,.65);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .field input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255,255,255,.1);
+            border: 1.5px solid rgba(255,255,255,.18);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: .92rem;
+            outline: none;
+            transition: border-color .3s, background .3s;
+        }
+        .field input::placeholder { color: rgba(255,255,255,.3); }
+        .field input:focus {
+            border-color: rgba(255,255,255,.5);
+            background: rgba(255,255,255,.15);
+        }
+
+        .error-msg {
+            background: rgba(244,67,54,.2);
+            border: 1px solid rgba(244,67,54,.4);
+            color: #ef9a9a;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: .82rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .error-msg.show { display: block; }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1976D2, #1565C0);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all .3s cubic-bezier(.23,1,.32,1);
+            box-shadow: 0 4px 18px rgba(21,101,192,.4);
+            margin-top: 6px;
+            position: relative;
+        }
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(21,101,192,.55);
+        }
+        .login-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+        .spinner {
+            display: none;
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin: 0 auto;
+        }
+        .login-btn.loading .btn-text { display: none; }
+        .login-btn.loading .spinner  { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: rgba(255,255,255,.5);
+            font-size: .8rem;
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .back-link:hover { color: rgba(255,255,255,.85); }
+    </style>
+</head>
+<body>
+    <div class="cloud cl1"></div>
+    <div class="cloud cl2"></div>
+    <div class="cloud cl3"></div>
+
+    <div class="login-wrap">
+        <div class="login-card">
+            <div class="login-badge">
+                <span class="plane-icon">&#9992;</span>
+                <div class="login-badge-text">
+                    <h1>DJM TOUR</h1>
+                    <p>Content Management</p>
+                </div>
+            </div>
+
+            <span class="admin-label">&#128274; Admin Access Only</span>
+
+            <div class="error-msg" id="error-msg">Invalid username or password. Please try again.</div>
+
+            <form id="login-form">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username"
+                           placeholder="Enter your username" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password"
+                           placeholder="Enter your password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="login-btn" id="login-btn">
+                    <span class="btn-text">Sign In to CMS</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+
+            <a href="/" class="back-link">&#8592; Back to the Blog</a>
+        </div>
+    </div>
+
+    <script>
+        // If already logged in, go straight to dashboard
+        fetch('/api/me').then(r => {
+            if (r.ok) window.location.href = '/admin/dashboard.html';
+        }).catch(() => {});
+
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const err = document.getElementById('error-msg');
+            err.classList.remove('show');
+            btn.disabled = true;
+            btn.classList.add('loading');
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (res.ok) {
+                    window.location.href = '/admin/dashboard.html';
+                } else {
+                    err.classList.add('show');
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                }
+            } catch {
+                err.textContent = 'Connection error. Please check your internet.';
+                err.classList.add('show');
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
+        });
+    </script>
+</body>
+</html>
