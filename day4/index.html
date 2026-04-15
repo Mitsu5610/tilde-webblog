@@ -120,14 +120,6 @@
                     <div class="photo-section">
                         <h4 class="photo-heading">&#128247; Our Photos</h4>
                         <div class="photo-grid" id="gallery-mmda"></div>
-                        <div class="drop-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'gallery-mmda')">
-                            <label class="drop-label" for="file-mmda">
-                                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                <strong>Click to add photos</strong>
-                                <small>or drag &amp; drop images here</small>
-                            </label>
-                            <input type="file" id="file-mmda" accept="image/*" multiple onchange="addPhotos(this,'gallery-mmda')" hidden>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -155,14 +147,6 @@
                     <div class="photo-section">
                         <h4 class="photo-heading">&#128247; Our Photos</h4>
                         <div class="photo-grid" id="gallery-micro"></div>
-                        <div class="drop-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'gallery-micro')">
-                            <label class="drop-label" for="file-micro">
-                                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                <strong>Click to add photos</strong>
-                                <small>or drag &amp; drop images here</small>
-                            </label>
-                            <input type="file" id="file-micro" accept="image/*" multiple onchange="addPhotos(this,'gallery-micro')" hidden>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -189,7 +173,6 @@
     <footer class="site-footer">
         <p class="footer-title">DJM Educational Tour &mdash; Day 4</p>
         <p class="footer-loc">MMDA &amp; MicroSourcing, Metro Manila &#127477;&#127469;</p>
-        <p class="footer-note">&#128247; Photos are displayed in your current browser session only.</p>
     </footer>
 
     <div class="lightbox" id="lightbox"><button class="lb-close" id="lb-close">&#10005;</button><img class="lb-img" id="lb-img" src="" alt="Photo"></div>
