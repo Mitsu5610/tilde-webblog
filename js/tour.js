@@ -103,3 +103,46 @@ function closeLightbox() {
 if (lbClose)  lbClose.addEventListener('click', closeLightbox);
 if (lightbox) lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ── "Fly the Route" back-button on day pages ───────────────
+(function () {
+    var day = document.body.getAttribute('data-day');
+    if (!day || day === 'home') return;          // hub page — skip
+
+    var btn = document.createElement('a');
+    btn.href = '/fly/?day=' + day;
+    btn.title = 'Fly the Route — Day ' + day;
+    btn.style.cssText = [
+        'position:fixed',
+        'bottom:24px',
+        'left:24px',
+        'z-index:990',
+        'display:flex',
+        'align-items:center',
+        'gap:9px',
+        'padding:11px 20px',
+        'border-radius:50px',
+        'background:linear-gradient(135deg,#04091E 0%,#0B1D4E 55%,#1565C0 100%)',
+        'color:#fff',
+        'font-family:Poppins,sans-serif',
+        'font-size:.74rem',
+        'font-weight:600',
+        'letter-spacing:2px',
+        'text-decoration:none',
+        'box-shadow:0 4px 24px rgba(21,101,192,.55)',
+        'transition:transform .25s,box-shadow .25s',
+        'white-space:nowrap'
+    ].join(';');
+    btn.innerHTML = '&#9992;&#128652; FLY TO DAY ' + day;
+
+    btn.addEventListener('mouseenter', function () {
+        btn.style.transform  = 'translateY(-3px)';
+        btn.style.boxShadow  = '0 8px 32px rgba(21,101,192,.75)';
+    });
+    btn.addEventListener('mouseleave', function () {
+        btn.style.transform  = '';
+        btn.style.boxShadow  = '0 4px 24px rgba(21,101,192,.55)';
+    });
+
+    document.body.appendChild(btn);
+}());

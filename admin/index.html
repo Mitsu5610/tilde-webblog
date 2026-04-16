@@ -239,12 +239,17 @@
     </div>
 
     <script>
-        // If already logged in, go straight to dashboard
-        fetch('/api/me').then(r => {
-            if (r.ok) window.location.href = '/admin/dashboard.html';
-        }).catch(() => {});
+        // ── Local-only auth (no server needed) ──
+        const CMS_USER = 'admin';
+        const CMS_PASS = 'djmtour2026';
 
-        document.getElementById('login-form').addEventListener('submit', async function (e) {
+        // If already logged in, skip to dashboard
+        try {
+            const s = JSON.parse(localStorage.getItem('djmCmsSession') || 'null');
+            if (s && s.ok && Date.now() < s.exp) window.location.href = '/admin/dashboard.html';
+        } catch(e) {}
+
+        document.getElementById('login-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
             const err = document.getElementById('error-msg');
@@ -255,25 +260,20 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                if (res.ok) {
+            setTimeout(function () {
+                if (username === CMS_USER && password === CMS_PASS) {
+                    // Store session for 8 hours
+                    localStorage.setItem('djmCmsSession', JSON.stringify({
+                        ok: true, username: username,
+                        exp: Date.now() + 8 * 60 * 60 * 1000
+                    }));
                     window.location.href = '/admin/dashboard.html';
                 } else {
                     err.classList.add('show');
                     btn.disabled = false;
                     btn.classList.remove('loading');
                 }
-            } catch {
-                err.textContent = 'Connection error. Please check your internet.';
-                err.classList.add('show');
-                btn.disabled = false;
-                btn.classList.remove('loading');
-            }
+            }, 400);
         });
     </script>
 </body>

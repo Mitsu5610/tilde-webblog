@@ -182,5 +182,6 @@
     </a>
     <script src="../js/tour.js"></script>
     <script src="../js/load-content.js"></script>
+    <script>(function(){var day=document.body.getAttribute('data-day');if(!day)return;var idx=parseInt(day,10)-1;if(isNaN(idx)||idx<0||idx>5)return;try{var s=JSON.parse(localStorage.getItem('djmFlyState')||'{}');if(!Array.isArray(s.tv))s.tv=[false,false,false,false,false,false];s.tv[idx]=true;localStorage.setItem('djmFlyState',JSON.stringify(s));}catch(e){}})();</script>
 </body>
 </html>
