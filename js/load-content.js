@@ -1,15 +1,16 @@
 /* ============================================================
    DJM Tour — load-content.js
-   Loads CMS content from localStorage (saved by admin dashboard).
+   Loads CMS content from Supabase (via /api/content).
    Falls back silently to page defaults if nothing is saved.
    ============================================================ */
-(function () {
+(async function () {
     var day = document.body.dataset.day;
     if (!day || day === 'home') return;
 
     var data;
     try {
-        data = JSON.parse(localStorage.getItem('djmContent_' + day) || 'null');
+        var res = await fetch('/api/content?day=' + day);
+        if (res.ok) data = await res.json();
     } catch(e) {
         return;
     }

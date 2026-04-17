@@ -711,13 +711,14 @@
         });
     }
 
-    /* ── Load day content (from localStorage) ──────────────── */
-    function loadDay(day) {
+    /* ── Load day content (from Supabase via API) ──────────── */
+    async function loadDay(day) {
         currentDay = day;
         showLoading();
         let saved = null;
         try {
-            saved = JSON.parse(localStorage.getItem('djmContent_' + day) || 'null');
+            const res = await fetch('/api/content?day=' + day);
+            if (res.ok) saved = await res.json();
         } catch(e) {}
         const content = mergeDefaults(day, saved);
         dayData[day] = content;
@@ -930,22 +931,34 @@
 
         const placeholder = el('div', 'photo-thumb');
         placeholder.style.cssText = 'display:flex;align-items:center;justify-content:center;';
-        placeholder.innerHTML = '<span class="uploading-badge">Processing…</span>';
+        placeholder.innerHTML = '<span class="uploading-badge">Uploading…</span>';
         grid.appendChild(placeholder);
 
         try {
             const dataUrl = await compressImage(file);
             if (!dataUrl) { showToast('Could not read image', 'error'); placeholder.remove(); return; }
 
+            /* Upload to Supabase via API */
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, data: dataUrl, type: file.type })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || 'Upload failed');
+            }
+            const { url } = await res.json();
+
             placeholder.innerHTML = '';
             const img = document.createElement('img');
-            img.src = dataUrl;
+            img.src = url;
             placeholder.appendChild(img);
-            placeholder.appendChild(makeRemoveBtn(dataUrl, stopId, placeholder));
-            addImageToState(stopId, dataUrl);
-            showToast('Photo added! Click Save to keep it.', 'success');
+            placeholder.appendChild(makeRemoveBtn(url, stopId, placeholder));
+            addImageToState(stopId, url);
+            showToast('Photo uploaded! Click Save to keep it.', 'success');
         } catch(e) {
-            showToast('Image error: ' + e.message, 'error');
+            showToast('Upload error: ' + e.message, 'error');
             placeholder.remove();
         }
     }
@@ -990,8 +1003,8 @@
         return content && content.stops.find(s => s.id === stopId);
     }
 
-    /* ── Save (to localStorage — no server needed) ─────────── */
-    function saveDay() {
+    /* ── Save (to Supabase via API) ─────────────────────────── */
+    async function saveDay() {
         const btn = document.getElementById('save-btn');
         btn.disabled = true;
         btn.textContent = 'Saving...';
@@ -1019,15 +1032,19 @@
         });
 
         try {
-            localStorage.setItem('djmContent_' + currentDay, JSON.stringify(content));
-            dayData[currentDay] = content;
-            showToast('Saved! Changes will appear on the day page.', 'success');
-        } catch(e) {
-            if (e.name === 'QuotaExceededError') {
-                showToast('Storage full — try removing some photos first.', 'error');
-            } else {
-                showToast('Save error: ' + e.message, 'error');
+            const res = await fetch('/api/content?day=' + currentDay, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(content)
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || 'Save failed');
             }
+            dayData[currentDay] = content;
+            showToast('Saved! Changes are now live on the day page.', 'success');
+        } catch(e) {
+            showToast('Save error: ' + e.message, 'error');
         }
 
         btn.disabled = false;
