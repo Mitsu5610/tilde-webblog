@@ -186,6 +186,28 @@
         .login-btn.loading .spinner  { display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        .field-wrap {
+            position: relative;
+        }
+        .field-wrap input {
+            padding-right: 44px;
+        }
+        .eye-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255,255,255,.4);
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 4px;
+            transition: color .2s;
+        }
+        .eye-btn:hover { color: rgba(255,255,255,.8); }
+
         .back-link {
             display: block;
             text-align: center;
@@ -225,8 +247,11 @@
                 </div>
                 <div class="field">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password"
-                           placeholder="Enter your password" autocomplete="current-password" required>
+                    <div class="field-wrap">
+                        <input type="password" id="password" name="password"
+                               placeholder="Enter your password" autocomplete="current-password" required>
+                        <button type="button" class="eye-btn" id="toggle-pw" aria-label="Toggle password visibility">&#128065;</button>
+                    </div>
                 </div>
                 <button type="submit" class="login-btn" id="login-btn">
                     <span class="btn-text">Sign In to CMS</span>
@@ -239,9 +264,13 @@
     </div>
 
     <script>
-        // ── Local-only auth (no server needed) ──
-        const CMS_USER = 'admin';
-        const CMS_PASS = 'djmtour2026';
+        // ── Password visibility toggle ──
+        document.getElementById('toggle-pw').addEventListener('click', function () {
+            const input = document.getElementById('password');
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            this.innerHTML = isHidden ? '&#128064;' : '&#128065;';
+        });
 
         // If already logged in, skip to dashboard
         try {
@@ -249,7 +278,7 @@
             if (s && s.ok && Date.now() < s.exp) window.location.href = '/admin/dashboard.html';
         } catch(e) {}
 
-        document.getElementById('login-form').addEventListener('submit', function (e) {
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
             const err = document.getElementById('error-msg');
@@ -260,8 +289,14 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
-            setTimeout(function () {
-                if (username === CMS_USER && password === CMS_PASS) {
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
                     // Store session for 8 hours
                     localStorage.setItem('djmCmsSession', JSON.stringify({
                         ok: true, username: username,
@@ -273,7 +308,12 @@
                     btn.disabled = false;
                     btn.classList.remove('loading');
                 }
-            }, 400);
+            } catch (fetchErr) {
+                err.textContent = 'Could not reach the server. Please try again.';
+                err.classList.add('show');
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
         });
     </script>
 </body>
