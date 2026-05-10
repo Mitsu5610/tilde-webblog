@@ -5,28 +5,26 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!verifyAuth(req))      return res.status(401).json({ error: 'Unauthorized' });
 
-    const supabase = getSupabase();
+    let supabase;
+    try { supabase = getSupabase(); } catch { supabase = null; }
     if (!supabase) {
         return res.status(503).json({
-            error: 'Supabase not configured. Add SUPABASE_URL and SUPABASE_SERVICE_KEY in environment variables.'
+            error: 'Supabase not configured. Add SUPABASE_URL and SUPABASE_SERVICE_KEY to Vercel environment variables.'
         });
     }
 
     try {
         const { filename, data, type } = req.body || {};
-        if (!data) return res.status(400).json({ error: 'No image data provided' });
+        if (!data) return res.status(400).json({ error: 'No image data received.' });
 
-        /* Strip the base64 header and convert to Buffer */
         const base64   = data.includes(',') ? data.split(',')[1] : data;
         const buffer   = Buffer.from(base64, 'base64');
-        const safeName = `tours/${Date.now()}-${(filename || 'photo.jpg').replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const base     = (filename || 'photo').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const safeName = `tours/${Date.now()}-${base}.webp`;
 
         const { error: uploadError } = await supabase.storage
             .from('tour-photos')
-            .upload(safeName, buffer, {
-                contentType: type || 'image/jpeg',
-                upsert: false
-            });
+            .upload(safeName, buffer, { contentType: 'image/webp', upsert: false });
 
         if (uploadError) throw uploadError;
 
@@ -36,6 +34,6 @@ module.exports = async function handler(req, res) {
 
         return res.json({ url: urlData.publicUrl });
     } catch (e) {
-        return res.status(500).json({ error: 'Upload failed: ' + e.message });
+        return res.status(500).json({ error: e.message || 'Upload failed' });
     }
 };

@@ -895,7 +895,7 @@
         return wrapper;
     }
 
-    /* ── Image compression (client-side, no server needed) ──── */
+    /* ── Image compression → base64 data URL */
     function compressImage(file, maxW, quality) {
         maxW = maxW || 1200; quality = quality || 0.72;
         return new Promise(function(resolve) {
@@ -908,14 +908,14 @@
                 const canvas = document.createElement('canvas');
                 canvas.width = w; canvas.height = h;
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                resolve(canvas.toDataURL('image/jpeg', quality));
+                resolve(canvas.toDataURL('image/webp', quality));
             };
             img.onerror = function() { URL.revokeObjectURL(blobUrl); resolve(null); };
             img.src = blobUrl;
         });
     }
 
-    /* ── File Upload (stores compressed base64 in localStorage) */
+    /* ── File Upload */
     function handleFileUpload(input, stopId) {
         uploadFiles(Array.from(input.files), stopId);
         input.value = '';
@@ -941,11 +941,10 @@
             const dataUrl = await compressImage(file);
             if (!dataUrl) { showToast('Could not read image', 'error'); placeholder.remove(); return; }
 
-            /* Upload to Supabase via API */
             const res = await fetch('/api/upload', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: file.name, data: dataUrl, type: file.type })
+                body: JSON.stringify({ filename: file.name, data: dataUrl, type: 'image/webp' })
             });
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));

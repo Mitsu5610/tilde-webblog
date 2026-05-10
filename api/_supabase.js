@@ -6,7 +6,13 @@ function getSupabase() {
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_KEY;
     if (!url || !key) return null;
-    if (!_client) _client = createClient(url, key);
+    if (!_client) {
+        try {
+            _client = createClient(url, key);
+        } catch {
+            return null;
+        }
+    }
     return _client;
 }
 

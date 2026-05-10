@@ -11,7 +11,8 @@ module.exports = async function handler(req, res) {
     const { day } = req.query;
     if (!day) return res.status(400).json({ error: 'day param required' });
 
-    const supabase = getSupabase();
+    let supabase;
+    try { supabase = getSupabase(); } catch { supabase = null; }
 
     /* ── GET — public, used by day pages to load custom content ── */
     if (req.method === 'GET') {
