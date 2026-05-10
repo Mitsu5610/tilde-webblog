@@ -982,9 +982,10 @@
             e.stopPropagation();
             thumbEl.style.transition = 'opacity .2s';
             thumbEl.style.opacity = '0';
-            setTimeout(() => {
+            setTimeout(async () => {
                 thumbEl.remove();
                 removeImageFromState(stopId, url);
+                await saveDay(true);
             }, 200);
         };
         return btn;
@@ -1006,7 +1007,7 @@
     }
 
     /* ── Save (to Supabase via API) ─────────────────────────── */
-    async function saveDay() {
+    async function saveDay(silent = false) {
         const btn = document.getElementById('save-btn');
         btn.disabled = true;
         btn.textContent = 'Saving...';
@@ -1044,7 +1045,7 @@
                 throw new Error(err.error || 'Save failed');
             }
             dayData[currentDay] = content;
-            showToast('Saved! Changes are now live on the day page.', 'success');
+            if (!silent) showToast('Saved! Changes are now live on the day page.', 'success');
         } catch(e) {
             showToast('Save error: ' + e.message, 'error');
         }
